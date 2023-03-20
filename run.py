@@ -40,6 +40,22 @@ if user_type == 'new':
         pin = input("Select pin (4-6 digits): ")
         if pin.isdigit() and 4 <= len(pin) <= 6:
             accounts.append_row([username, pin])
+            SHEET.add_worksheet(title=f'{username}_profile', rows=100, cols=6)
+            profile = SHEET.worksheet(f'{username}_profile')
+            profile.update('A1', 'Date')
+            profile.update('B1', 'Gender')
+            profile.update('C1', 'Age')
+            profile.update('D1', 'Weight')
+            profile.update('E1', 'Height')
+            profile.update('F1', 'Goal')
+            SHEET.add_worksheet(title=f'{username}_runs', rows=100, cols=6)
+            runs = SHEET.worksheet(f'{username}_runs')
+            runs.update('A1', 'Date')
+            runs.update('B1', 'Distance')
+            runs.update('C1', 'Time')
+            runs.update('D1', 'Avg speed')
+            runs.update('E1', 'Calories burnt')
+            runs.update('F1', 'Note')
             break
         else:
             print("Pin format incorrect. Please enter 4-6 digits only.")
@@ -66,4 +82,6 @@ if user_type == 'login':
                 break
             else:
                 continue
+
+# User profile
 
