@@ -1,3 +1,4 @@
+import datetime
 import gspread
 from google.oauth2.service_account import Credentials
 
@@ -11,6 +12,7 @@ CREDS = Credentials.from_service_account_file('creds.json')
 SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('runtracker')
+
 
 # Welcome
 print("Hello & Welcome to Run Tracker!")
@@ -40,14 +42,14 @@ if user_type == 'new':
         pin = input("Select pin (4-6 digits): ")
         if pin.isdigit() and 4 <= len(pin) <= 6:
             accounts.append_row([username, pin])
-            SHEET.add_worksheet(title=f'{username}_profile', rows=100, cols=6)
+            # Create worksheets for new user
+            SHEET.add_worksheet(title=f'{username}_profile', rows=100, cols=5)
             profile = SHEET.worksheet(f'{username}_profile')
             profile.update('A1', 'Date')
             profile.update('B1', 'Gender')
             profile.update('C1', 'Age')
             profile.update('D1', 'Weight')
             profile.update('E1', 'Height')
-            profile.update('F1', 'Goal')
             SHEET.add_worksheet(title=f'{username}_runs', rows=100, cols=6)
             runs = SHEET.worksheet(f'{username}_runs')
             runs.update('A1', 'Date')
@@ -63,25 +65,37 @@ if user_type == 'new':
     print("Registration succesful.")
     print("Good to have you onboard, " + username)
 
+
 # Login existing user
 if user_type == 'login':
     while True:
         username = input("Username: ")
         pin = input("Pin: ")
+
         cell = accounts.find(username)
-        row = cell.row
-        values = accounts.row_values(row)
-        if values[1] == pin:
-            print("Welcome back, " + username)
-            break
+
+        if cell is None:
+            print("Username not found.")
         else:
-            print("Username or pin incorrect.")
-            choice = input("Try again or create a new account? (try/new): ")
-            if choice == 'new':
-                user_type = 'new'
+            row = cell.row
+            values = accounts.row_values(row)
+
+            if values[1] == pin:
+                print("Welcome back, " + username)
                 break
             else:
-                continue
+                print("Username or pin incorrect.")
 
-# User profile
+        while True:
+            choice = input("Try again or create a new account? (try/new): ")
+            if choice in ['new', 'try']:
+                break
+            else:
+                print("Invalid input. Please enter 'try' or 'new'.")
+
+        if choice == 'new':
+            user_type = 'new'
+            break
+        else:
+            continue
 
