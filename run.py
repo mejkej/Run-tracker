@@ -14,10 +14,10 @@ GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('runtracker')
 
 
-# Welcome
+# WELCOME
 print("Hello & Welcome to Run Tracker!")
 
-# Log in or Register
+# LOG IN OR REGISTER
 while True:
     user_type = input("Login or create new account (login/new): ")
     if user_type in ['new', 'login']:
@@ -25,7 +25,7 @@ while True:
     else:
         print("Invalid input. Please enter 'new' or 'login'.")
 
-# Create new account
+# CREATE NEW ACCOUNT
 accounts = SHEET.worksheet('accounts')
 if user_type == 'new':
     while True:
@@ -42,22 +42,22 @@ if user_type == 'new':
         pin = input("Select pin (4-6 digits): ")
         if pin.isdigit() and 4 <= len(pin) <= 6:
             accounts.append_row([username, pin])
-            # Create worksheets for new user
+            # CREATING WORKSHEETS FOR NEW USERS
             SHEET.add_worksheet(title=f'{username}_profile', rows=100, cols=5)
-            profile = SHEET.worksheet(f'{username}_profile')
-            profile.update('A1', 'Date')
-            profile.update('B1', 'Gender')
-            profile.update('C1', 'Age')
-            profile.update('D1', 'Weight')
-            profile.update('E1', 'Height')
+            profile_sheet = SHEET.worksheet(f'{username}_profile')
+            profile_sheet.update('A1', 'Date')
+            profile_sheet.update('B1', 'Gender')
+            profile_sheet.update('C1', 'Age')
+            profile_sheet.update('D1', 'Weight')
+            profile_sheet.update('E1', 'Height')
             SHEET.add_worksheet(title=f'{username}_runs', rows=100, cols=6)
-            runs = SHEET.worksheet(f'{username}_runs')
-            runs.update('A1', 'Date')
-            runs.update('B1', 'Distance')
-            runs.update('C1', 'Time')
-            runs.update('D1', 'Avg speed')
-            runs.update('E1', 'Calories burnt')
-            runs.update('F1', 'Note')
+            runs_sheet = SHEET.worksheet(f'{username}_runs')
+            runs_sheet.update('A1', 'Date')
+            runs_sheet.update('B1', 'Distance')
+            runs_sheet.update('C1', 'Time')
+            runs_sheet.update('D1', 'Avg speed')
+            runs_sheet.update('E1', 'Calories burnt')
+            runs_sheet.update('F1', 'Note')
             break
         else:
             print("Pin format incorrect. Please enter 4-6 digits only.")
@@ -66,7 +66,7 @@ if user_type == 'new':
     print("Good to have you onboard, " + username)
 
 
-# Login existing user
+# LOG IN EXISTING USER
 if user_type == 'login':
     while True:
         username = input("Username: ")
@@ -98,4 +98,92 @@ if user_type == 'login':
             break
         else:
             continue
+
+# MAIN MENU
+while True:
+    print("MAIN MENU")
+    print("1. View your profile.")
+    print("2. Update your profile.")
+    print("3. View your runs.")
+    print("4. Add to runs.")
+    print("5. Logout/Exit.")
+    go_to = input("Enter number: ")
+
+    # CREATES NEW WORKSHEETS INCASE THEY WHERE NOT FOUND
+    try:
+        profile_sheet = SHEET.worksheet(f'{username}_profile')
+    except gspread.exceptions.WorksheetNotFound:
+        SHEET.add_worksheet(title=f'{username}_profile', rows=100, cols=5)
+        profile_sheet = SHEET.worksheet(f'{username}_profile')
+        profile_sheet.update('A1', 'Date')
+        profile_sheet.update('B1', 'Gender')
+        profile_sheet.update('C1', 'Age')
+        profile_sheet.update('D1', 'Weight')
+        profile_sheet.update('E1', 'Height')
+    try:
+        runs_sheet = SHEET.worksheet(f'{username}_runs')
+    except gspread.exceptions.WorksheetNotFound:
+        SHEET.add_worksheet(title=f'{username}_runs', rows=100, cols=6)
+        runs_sheet = SHEET.worksheet(f'{username}_runs')
+        runs_sheet.update('A1', 'Date')
+        runs_sheet.update('B1', 'Distance')
+        runs_sheet.update('C1', 'Time')
+        runs_sheet.update('D1', 'Avg speed')
+        runs_sheet.update('E1', 'Calories burnt')
+        runs_sheet.update('F1', 'Note')
+
+    # 1. VIEW PROFILE
+    if go_to == '1':
+        while True:
+            print("VIEW PROFILE")
+            print("1. View last profile update.")
+            print("2. View complete profile history.")
+            print("3. Go back to main menu.")
+            go_to = input("Enter number: ")
+            values = profile_sheet.get_all_values()
+            last_row = values[-1]
+
+            if go_to == '1':
+                print(values[0])
+                print(values[-1])
+
+            elif go_to == '2':
+                print(values)
+
+            elif go_to == '3':
+                break
+
+    # 2. UPDATE PROFILE
+    if go_to == '2':
+        while True:
+            print("UPDATE PROFILE")
+
+    # 3. VIEW RUNS
+    if go_to == '3':
+        while True:
+            print("VIEW RUNS")
+            print("1. View last updated run.")
+            print("2. View complete history.")
+            print("3. Go back to main menu.")
+            go_to = input("Enter number: ")
+            values = runs_sheet.get_all_values()
+            last_row = values[-1]
+
+            if go_to == '1':
+                print(values[0])
+                print(values[-1])
+
+            elif go_to == '2':
+                print(values)
+
+            elif go_to == '3':
+                break
+
+    # 4. ADD RUN
+    if go_to == '4':
+        while True:
+            print("ADD RUN")
+    # 5. EXIT / LOG OUT
+    if go_to == '5':
+        print("GOOD BYE!")
 
