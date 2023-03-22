@@ -153,9 +153,13 @@ while True:
 
             elif go_totwo == '3':
                 break
+
             else:
-                print("Invalid input. Enter '1' '2' '3' ")
-                continue
+                try:
+                    int(go_totwo)
+                    print("Invalid input. Enter '1', '2', or '3'")
+                except ValueError:
+                    print("Invalid input. Enter '1', '2', or '3'")
 
     # 2. UPDATE PROFILE
     if go_to == '2':
