@@ -140,19 +140,22 @@ while True:
             print("1. View last profile update.")
             print("2. View complete profile history.")
             print("3. Go back to main menu.")
-            go_to = input("Enter number: ")
+            go_totwo = input("Enter number: ")
             values = profile_sheet.get_all_values()
             last_row = values[-1]
 
-            if go_to == '1':
+            if go_totwo == '1':
                 print(values[0])
                 print(values[-1])
 
-            elif go_to == '2':
+            elif go_totwo == '2':
                 print(values)
 
-            elif go_to == '3':
-            break
+            elif go_totwo == '3':
+                break
+            else:
+                print("Invalid input. Enter '1' '2' '3' ")
+                continue
 
     # 2. UPDATE PROFILE
     if go_to == '2':
@@ -181,6 +184,7 @@ while True:
             if not height.isdigit():
                 print("Invalid input. Enter weight using digits only.")
                 continue
+
             profile_data = [str_date, gender, age, weight, height]
             profile_sheet.append_row(profile_data)
             print("Your profile has been updated.")
