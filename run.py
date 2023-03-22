@@ -219,6 +219,14 @@ while True:
     if go_to == '4':
         while True:
             print("ADD RUN")
+            current_date = datetime.date.today()
+            str_date = current_date.strftime('%Y-%m-%d')
+            print("If the run you want to add took place today Enter(y)")
+            date = input("  f not enter the date ")
+            distance
+            time
+            note
+
     # 5. EXIT / LOG OUT
     if go_to == '5':
         print("GOOD BYE!")
