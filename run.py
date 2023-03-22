@@ -101,11 +101,12 @@ if user_type == 'login':
 
 # MAIN MENU
 while True:
+    print("")
     print("MAIN MENU")
     print("1. View your profile.")
     print("2. Update your profile.")
     print("3. View your runs.")
-    print("4. Add to runs.")
+    print("4. Add to your runs.")
     print("5. Logout/Exit.")
     go_to = input("Enter number: ")
 
@@ -151,12 +152,39 @@ while True:
                 print(values)
 
             elif go_to == '3':
-                break
+            break
 
     # 2. UPDATE PROFILE
     if go_to == '2':
         while True:
+
             print("UPDATE PROFILE")
+            current_date = datetime.date.today()
+            str_date = current_date.strftime('%Y-%m-%d')
+
+            gender = input("Enter your Gender (man/woman/other): ")
+            if gender.lower() not in ['man', 'woman', 'other']:
+                print("Invalid input. Enter (man/woman/other)")
+                continue
+
+            age = input("Enter your age (only digits): ")
+            if not age.isdigit():
+                print("Invalid input. Enter (man/woman/other)")
+                continue
+
+            weight = input("Enter your weight (in Kg only digits): ")
+            if not weight.isdigit():
+                print("Invalid input. Enter weight using digits only.")
+                continue
+
+            height = input("Enter your height in Cm (only digits): ")
+            if not height.isdigit():
+                print("Invalid input. Enter weight using digits only.")
+                continue
+            profile_data = [str_date, gender, age, weight, height]
+            profile_sheet.append_row(profile_data)
+            print("Your profile has been updated.")
+            break
 
     # 3. VIEW RUNS
     if go_to == '3':
