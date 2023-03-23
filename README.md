@@ -35,3 +35,63 @@ Happy coding!
 # Your code goes here.
 # You can delete these comments, but do not change the name of this file
 # Write your code to expect a terminal of 80 characters wide and 24 rows high
+
+# Run Tracker.
+
+## Introduction:
+Run Tracker is a programe written in Python. With Run Tracker you can get a good overview of your
+Running and your weight over time. By logging your runs and updating your profile.
+Run tracker will also calculate your avg speed of every run in Km/h and the average time it takes you to run a Km of each run. Run Tracker will also calculate approximatly how many calories you burned during the run.
+## Purpose:
+Tracking your running and your weight over time. By logging your runs and updating your profile you will be able to look back and see exact stats. The computer never lies but the human memory does have a tendancy to slighly edit the past or just blankly deleting some memories.
+This is only the first version of the program but i would love to one day make it in to a fitness app.
+
+## The code:
+User will first be promted if user want to login or create a new account.
+
+If selecting new: You can register a account with a username. The requirement is 3-10 letters only.
+
+Then you will be prompted to set a pin for your account. Pin requirement is 4-6 digits.
+
+The program will then create two personal google sheets for the account. One for users gender, age, weight and height plus it will automatically add the current date the data was added.
+
+Registered accounts Username & Pin will be saved on a googlesheet.
+If you select login instead of create new account the code will check if any of the rows in the accounts sheet matches the Username & Pin, if it does user will be logged in.
+
+The second sheet is for logging the users runs. User gets the choice to automatically fill in the current date or incase the run occured before they can set the date.
+User will then get asked to input the distance in Km and lastly the time of the run.
+
+The program will then calculate: 
+1. Average speed in Km/h.
+2. Average time per Km.
+3. Amount of calories burned.
+
+When logged in the user will see the main menu. Where there is 5 possible options.
+
+1. View your profile. 
+If this one is selected the user will get three options:
+1. View last profile update.
+2. View complete profile history.
+3. Go back to main menu.
+
+2. Update your profile.
+User gets asked to input: Gender, Age, Weight and Height.
+All of these plus the current date will be saved on their personal google sheet.
+
+3. View your runs.
+If this one is selected the user will get three options:
+1. View last updated run.
+2. View complete history.
+3. Go back to main menu.
+
+5. Logout/Exit.
+If this one is selected the program will print GOOD BYE! and shut down the program.
+
+## Resources:
+the resources i have used to learn how to code and work with github along the project:
+
+https://codeinstitute.net/global/
+
+https://www.youtube.com/ 
+
+https://www.w3schools.com/

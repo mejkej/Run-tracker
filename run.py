@@ -57,7 +57,7 @@ if user_type == 'new':
             runs_sheet.update('C1', 'Time')
             runs_sheet.update('D1', 'Avg Time/Km')
             runs_sheet.update('E1', 'Avg speed')
-            runs_sheet.update('F1', 'Calories burnt')
+            runs_sheet.update('F1', 'Calories burned')
             break
         else:
             print("Pin format incorrect. Please enter 4-6 digits only.")
@@ -131,7 +131,7 @@ while True:
         runs_sheet.update('C1', 'Time')
         runs_sheet.update('D1', 'Avg Time/Km')
         runs_sheet.update('E1', 'Avg speed')
-        runs_sheet.update('F1', 'Calories burnt')
+        runs_sheet.update('F1', 'Calories burned')
 
     # 1. VIEW PROFILE
     if go_to == '1':
@@ -179,9 +179,11 @@ while True:
                 print("Invalid input. Enter (only digits): ")
                 continue
 
-            weight = input("Enter your weight (in Kg only digits): ")
-            if not weight.isdigit():
-                print("Invalid input. Enter weight using digits only.")
+            weight = input("Enter weight (in Kg Ex '73.4'): ")
+            if re.match(r'^\d+(\.\d+)?$'):
+                weight_float = float(weight)
+            else:    
+                print("Invalid input. (Example: '73.4' or '65').")
                 continue
 
             height = input("Enter your height in Cm (only digits): ")
@@ -219,6 +221,11 @@ while True:
     if go_to == '4':
         while True:
             print("ADD RUN")
+            
+            profile_data.get_all_values()
+            last_row = values[-1]
+            last_weight = float(last_row[3])
+
             current_date = datetime.date.today()
             str_date = current_date.strftime('%Y-%m-%d')
             print("To set date of run to current date enter (y)")
@@ -243,12 +250,13 @@ while True:
             avg_speed = (distance * 3600) / min_to_sec
             avg_speed_kmh = f"{avg_speed:.2f} km/h"
             
+            last_row = values[-1]
             calories_burnt = 
 
             
             run_data = [date, distance, time, avg_time_km avg_speed_kmh, calories_burnt]
             profile_sheet.append_row(profile_data)
-            print("Run registered succesfully.")
+            print("Run added succesfully.")
 
     # 5. EXIT / LOG OUT
     if go_to == '5':
