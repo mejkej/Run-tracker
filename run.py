@@ -55,9 +55,9 @@ if user_type == 'new':
             runs_sheet.update('A1', 'Date')
             runs_sheet.update('B1', 'Distance')
             runs_sheet.update('C1', 'Time')
-            runs_sheet.update('D1', 'Avg speed')
-            runs_sheet.update('E1', 'Calories burnt')
-            runs_sheet.update('F1', 'Note')
+            runs_sheet.update('D1', 'Avg Time/Km')
+            runs_sheet.update('E1', 'Avg speed')
+            runs_sheet.update('F1', 'Calories burnt')
             break
         else:
             print("Pin format incorrect. Please enter 4-6 digits only.")
@@ -129,9 +129,9 @@ while True:
         runs_sheet.update('A1', 'Date')
         runs_sheet.update('B1', 'Distance')
         runs_sheet.update('C1', 'Time')
-        runs_sheet.update('D1', 'Avg speed')
-        runs_sheet.update('E1', 'Calories burnt')
-        runs_sheet.update('F1', 'Note')
+        runs_sheet.update('D1', 'Avg Time/Km')
+        runs_sheet.update('E1', 'Avg speed')
+        runs_sheet.update('F1', 'Calories burnt')
 
     # 1. VIEW PROFILE
     if go_to == '1':
@@ -176,7 +176,7 @@ while True:
 
             age = input("Enter your age (only digits): ")
             if not age.isdigit():
-                print("Invalid input. Enter (man/woman/other)")
+                print("Invalid input. Enter (only digits): ")
                 continue
 
             weight = input("Enter your weight (in Kg only digits): ")
@@ -221,11 +221,34 @@ while True:
             print("ADD RUN")
             current_date = datetime.date.today()
             str_date = current_date.strftime('%Y-%m-%d')
-            print("If the run you want to add took place today Enter(y)")
-            date = input("  f not enter the date ")
-            distance
-            time
-            note
+            print("To set date of run to current date enter (y)")
+            date = input("If other date Enter (YYYY-MM-DD): ")
+            if date == 'y':
+                date = str_date
+            elif not re.match(r'\d{4}-\d{2}-\d{2}', date):
+                print("Invalid input. Enter 'YYYY-MM-DD'.")
+                continue
+
+            distance = float(input("Distance in Km (Ex '5' or '5.3'): "))
+
+            time = input("Time MM:SS (Ex '27:14' or '06:02'): ")
+
+            minutes = int(time.split(':')[0])
+            seconds = int(time.split(':')[1])
+            min_to_sec = minutes * 60 + seconds
+            sec_per_km = min_to_sec / distance
+            result_min = int(sec_per_km // 60)
+            result_sec = int(sec_per_km % 60)
+            avg_time_km = f"{result_min}:{result_sec:02d}"
+            avg_speed = (distance * 3600) / min_to_sec
+            avg_speed_kmh = f"{avg_speed:.2f} km/h"
+            
+            calories_burnt = 
+
+            
+            run_data = [date, distance, time, avg_time_km avg_speed_kmh, calories_burnt]
+            profile_sheet.append_row(profile_data)
+            print("Run registered succesfully.")
 
     # 5. EXIT / LOG OUT
     if go_to == '5':
