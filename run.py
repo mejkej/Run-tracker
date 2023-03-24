@@ -1,6 +1,7 @@
 import datetime
-import gspread
 import re
+import sys
+import gspread
 from google.oauth2.service_account import Credentials
 
 SCOPE = [
@@ -14,14 +15,21 @@ SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('runtracker')
 
+def exit_program():
+    print("Goodbye!")
+    sys.exit()
+
 # WELCOME
 print("Hello & Welcome to Run Tracker!")
+print("Exit program at any time by Entering 'exit' ")
 
 # LOG IN OR REGISTER
 while True:
     user_type = input("Login or create new account (login/new): ")
     if user_type in ['new', 'login']:
         break
+    elif user_type == 'exit':
+        exit_program()
     else:
         print("Invalid input. Please enter 'new' or 'login'.")
 
@@ -33,10 +41,15 @@ if user_type == 'new':
         if username.isalpha() and 3 <= len(username) <= 10:
             if not accounts.find(username):
                 break
-            else:
-                print("Username already taken. Please choose another one.")
+        elif username == 'exit':
+          exit_program()
+
+        else:
+            print("Username already taken. Please choose another one.")
+            continue
         else:
             print("Username format incorrect. Please enter 3-10 letters only.")
+            continue
 
     while True:
         pin = input("Select pin (4-6 digits): ")
@@ -76,6 +89,7 @@ if user_type == 'login':
 
         if cell is None:
             print("Username not found.")
+            continue
         else:
             row = cell.row
             values = accounts.row_values(row)
@@ -149,7 +163,6 @@ while True:
                 print("Profile empty. Update your profile!")
                 break
 
-            print("VIEW PROFILE")
             print("1. View last profile update.")
             print("2. View complete profile history.")
             print("3. Go back to main menu.")
@@ -166,39 +179,31 @@ while True:
                 break
 
             else:
-                print("Invalid input. Enter '1', '2', or '3'")
-                continue
+                print("Invalid input. Enter '1', '2' or '3'")
 
     # 2. UPDATE PROFILE
     if go_to == '2':
         while True:
-
-            print("UPDATE PROFILE")
             current_date = datetime.date.today()
             str_date = current_date.strftime('%Y-%m-%d')
 
             gender = input("Enter your Gender (man/woman/other): ")
-            if gender.low() in ['man', 'woman', 'other']:
-                continue
-            else:
+            if gender.lower() not in ['man', 'woman', 'other']:
                 print("Invalid input. Enter 'man', 'woman', or 'other'")
                 continue
 
             age = input("Enter your age (Digits only): ")
-            if age.isdigit() and 1 <= len(age) <= 3:
-            else:
-                print("Invalid input. Enter Ex: '32' (Digits only): ")
+            if not age.isdigit() or not 1 <= len(age) <= 3:
+                print("Invalid input. Enter Ex: '28' or '51'")
                 continue
 
             weight = input("Enter your weight in KG Ex: '84' or '73.4': ")
-            if re.match(r'^\d{1,3}(\.\d)?$', weight):
-            else:
-                print("Invalid input. Ex: '73.4' or '65').")
+            if not re.match(r'^\d{1,3}(\.\d)?$', weight):
+                print("Invalid input. Enter Ex: '73.4' or '65').")
                 continue
 
             height = input("Enter your height in Cm (Digits only): ")
-            if height.isdigit() and 1 <= len(height) <= 3:
-            else:
+            if not height.isdigit() or not 2 <= len(height) <= 3:
                 print("Invalid input. Enter Ex: '182'.")
                 continue
 
@@ -215,20 +220,20 @@ while True:
                 print("Runs empty. Add run first!")
                 break
 
-            print("VIEW RUNS")
             print("1. View last added run.")
             print("2. View complete history.")
             print("3. Go back to main menu.")
             go_to_three = input("Enter number: ")
-            values = runs_sheet.get_all_values()
-            last_row = values[-1]
+            runs_values = runs_sheet.get_all_values()
 
             if go_to_three == '1':
                 print(runs_values[0])
                 print(runs_values[-1])
+                break
 
             elif go_to_three == '2':
                 print(runs_values)
+                break
 
             elif go_to_three == '3':
                 break
@@ -240,11 +245,8 @@ while True:
     if go_to == '4':
         while True:
             print("ADD RUN")
-            
-            profile_data.get_all_values()
-            last_row = values[-1]
-            weight = (last_row[3])
-            weight_float = float(weight)
+            get_weight = profile_sheet.get_values(weight[-1])
+            weight_float = float(get_weight)
 
             current_date = datetime.date.today()
             str_date = current_date.strftime('%Y-%m-%d')
@@ -257,12 +259,18 @@ while True:
                 continue
 
             distance = input("Distance in Km (Ex '5' or '5.3'): ")
-            distance_float = distance
+            if not re.match(r'^\d{1,2}(\.\d)?$', distance):
+                print("Invalid input. Enter Ex: '12.4' or '3').")
+                continue
 
-            time = input("Time MM:SS (Ex '27:14' or '06:02'): ")
+            distance_float = float(distance)
 
-            minutes = int(time.split(':')[0])
-            seconds = int(time.split(':')[1])
+            tot_time = input("Total run time MM:SS (Ex '27:14' or '06:02'): ")
+            if not re.match(r"^\d{2}:\d{2}$", tot_time):
+                print("Invalid input. Enter Ex: '07:04' or '55:41'")
+
+            minutes = int(tot_time.split(':')[0])
+            seconds = int(tot_time.split(':')[1])
 
             min_to_sec = minutes * 60 + seconds
 
@@ -272,19 +280,18 @@ while True:
 
             result_sec = int(sec_per_km % 60)
 
-            avg_time_km = f"{result_min}:{result_sec:02d}"
+            avg_km = f"{result_min}:{result_sec:02d}"
 
             avg_speed = (distance * 3600) / min_to_sec
 
-            avg_speed_kmh = f"{avg_speed:.2f} km/h"
+            kmh = f"{avg_speed:.2f} km/h"
 
-            calories_burned = 0.75 * weight_float * distance_float
+            calories = 0.75 * weight_float * distance_float
 
-            run_data = [date, distance, time, avg_time_km, avg_speed_kmh, calories_burned]
-            profile_sheet.append_row(profile_data)
+            run_data = [date, distance, tot_time, avg_km, kmh, calories]
+            runs_sheet.append_row(profile_data)
             print("Run added succesfully.")
 
     # 5. EXIT / LOG OUT
     if go_to == '5':
         print("GOOD BYE!")
-
