@@ -273,7 +273,7 @@ while True:
         while True:
             print("ADD RUN")
             profile_sheet = SHEET.worksheet(f'{username}_profile')
-            get_weight = profile_sheet.get_values(weight[-1])
+            get_weight = profile_sheet.get_values(profile_last_row, 4).value
             weight_float = float(get_weight)
 
             current_date = datetime.date.today()
