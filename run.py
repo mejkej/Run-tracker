@@ -9,19 +9,24 @@ SCOPE = [
     "https://www.googleapis.com/auth/drive.file",
     "https://www.googleapis.com/auth/drive"
 ]
-
+# CREDS SAME CODE AS USED IN THE LOVE SANDWICHES
 CREDS = Credentials.from_service_account_file('creds.json')
 SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
+
+# OPEN RUN TRACKER MAIN SHEET
 SHEET = GSPREAD_CLIENT.open('runtracker')
 
+
+# EXIT PROGRAM FUNCTION
 def exit_program():
-    print("Goodbye!")
+    print("GOOD BYE!")
     sys.exit()
+
 
 # WELCOME
 print("Hello & Welcome to Run Tracker!")
-print("Exit program at any time by Entering 'exit' ")
+print("Enter 'exit' at any time to quit the program.")
 
 # LOG IN OR REGISTER
 while True:
@@ -37,22 +42,24 @@ while True:
 accounts = SHEET.worksheet('accounts')
 if user_type == 'new':
     while True:
+        # CHECKING USERNAMES LENGHT & THAT IT ONLY CONTAINS LETTERS
         username = input("Select a username (3-10 letters): ")
-        if username.isalpha() and 3 <= len(username) <= 10:
-            if not accounts.find(username):
-                break
-        elif username == 'exit':
-          exit_program()
-
-        else:
+        if not username.isalpha() and 3 <= len(username) <= 10:
+            print("Invalid input. 3-10 Letters only.")
+            continue
+        elif accounts.find(username):
             print("Username already taken. Please choose another one.")
             continue
-        else:
-            print("Username format incorrect. Please enter 3-10 letters only.")
-            continue
+        elif username == 'exit':
+            exit_program()
 
-    while True:
         pin = input("Select pin (4-6 digits): ")
+        if not pin.isdigit() and 4 <= len(pin) <= 6:
+            print("Invalid input. 4-6 Digits Ex: '9999', '5555', '123451'.")
+            continue
+        elif pin == 'exit':
+            exit_program()
+
         if pin.isdigit() and 4 <= len(pin) <= 6:
             accounts.append_row([username, pin])
             # CREATING WORKSHEETS FOR NEW USERS
@@ -72,9 +79,6 @@ if user_type == 'new':
             runs_sheet.update('E1', 'Avg speed')
             runs_sheet.update('F1', 'Calories burned')
             break
-        else:
-            print("Pin format incorrect. Please enter 4-6 digits only.")
-
     print("Registration succesful.")
     print("Good to have you onboard, " + username)
 
@@ -82,54 +86,73 @@ if user_type == 'new':
 # LOG IN EXISTING USER
 if user_type == 'login':
     while True:
+
         username = input("Username: ")
+        if username == 'exit':
+            exit_program()
+
         pin = input("Pin: ")
+        if pin == 'exit':
+            exit_program()
 
         cell = accounts.find(username)
+        row = cell.row
+        values = accounts.row_values(row)
 
-        if cell is None:
-            print("Username not found.")
-            continue
-        else:
-            row = cell.row
-            values = accounts.row_values(row)
-
-            if values[1] == pin:
-                print("Welcome back, " + username)
-                break
-            else:
-                print("Username or pin incorrect.")
-
-        while True:
-            choice = input("Try again or create a new account? (try/new): ")
-            if choice in ['new', 'try']:
-                break
-            else:
-                print("Invalid input. Please enter 'try' or 'new'.")
-
-        if choice == 'new':
-            user_type = 'new'
+        if values[1] == pin:
+            print("Welcome back, " + username)
             break
+
+        elif cell is None:
+            print("Username not found.")
+            choice = input("Try again or create a new account? (try/new): ")
+
+            if choice == 'try':
+                continue
+
+            elif choice == 'new':
+                user_type = 'new'
+
+            elif choice == 'exit':
+                exit_program()
+            else:
+                print("Invalid input. Enter 'try' or 'new'.")
         else:
-            continue
+            print("Username or pin incorrect.")
+            choice = input("Try again or create a new account? (try/new): ")
+
+            if choice == 'try':
+                continue
+
+            elif choice == 'new':
+                user_type = 'new'
+
+            elif choice == 'exit':
+                exit_program()
+            else:
+                print("Invalid input. Enter 'try' or 'new'.")
+
+# PROFILE SHEET
+profile_sheet = SHEET.worksheet(f'{username}_profile')
+profile_values = profile_sheet.get_all_values()
+profile_num_rows = profile_sheet.row_count
+profile_last_row = profile_num_rows
+
+# RUNS SHEET
+runs_sheet = SHEET.worksheet(f'{username}_runs')
+runs_values = runs_sheet.get_all_values()
+runs_num_rows = runs_sheet.row_count
+runs_last_row = runs_num_rows
 
 while True:
-    # PROFILE SHEET
-    profile_sheet = SHEET.worksheet(f'{username}_profile')
-    profile_values = profile_sheet.get_all_values()
-
-    # RUNS SHEET
-    runs_sheet = SHEET.worksheet(f'{username}_runs')
-    runs_values = runs_sheet.get_all_values()
-
     # MAIN MENU
     print("MAIN MENU")
     print("1. View profile. 2. Update profile.")
     print("3. View runs. 4. Add run.")
     print("5. Logout/Exit.")
     go_to = input("Enter number: ")
-    if go_to not in ['1', '2', '3', '4', '5']:
-        print("Invalid input. Enter digit only Ex: '1'")
+    if go_to not in ['1', '2', '3', '4', '5', 'exit']:
+        print("Invalid input. Enter digits only Ex: '1'")
         continue
 
 # CREATES NEW WORKSHEETS INCASE THEY WHERE NOT FOUND
@@ -173,7 +196,8 @@ while True:
                 print(profile_values[-1])
 
             elif go_to_one == '2':
-                print(runs_values)
+                print(profile_values[0])
+                print(profile_values[-1])
 
             elif go_to_one == '3':
                 break
@@ -219,6 +243,7 @@ while True:
             if len(runs_values) <= 1:
                 print("Runs empty. Add run first!")
                 break
+    
 
             print("1. View last added run.")
             print("2. View complete history.")
@@ -228,11 +253,13 @@ while True:
 
             if go_to_three == '1':
                 print(runs_values[0])
-                print(runs_values[-1])
+                print(runs_values[runs_last_row])
                 break
 
+# if i have time make this into a loop so that you can request history one at the time max 80 char
             elif go_to_three == '2':
-                print(runs_values)
+                print(runs_values[0])
+                print(runs_values[runs_last_row])
                 break
 
             elif go_to_three == '3':
@@ -245,6 +272,7 @@ while True:
     if go_to == '4':
         while True:
             print("ADD RUN")
+            profile_sheet = SHEET.worksheet(f'{username}_profile')
             get_weight = profile_sheet.get_values(weight[-1])
             weight_float = float(get_weight)
 
@@ -288,10 +316,11 @@ while True:
 
             calories = 0.75 * weight_float * distance_float
 
-            run_data = [date, distance, tot_time, avg_km, kmh, calories]
+            runs_data = [date, distance, tot_time, avg_km, kmh, calories]
             runs_sheet.append_row(profile_data)
             print("Run added succesfully.")
 
     # 5. EXIT / LOG OUT
-    if go_to == '5':
+    if go_to == ['exit', '5']:
         print("GOOD BYE!")
+        exit_program()
