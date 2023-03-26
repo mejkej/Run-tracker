@@ -318,5 +318,6 @@ while True:
 
     # 5. EXIT / LOG OUT
     if go_to == ['exit', '5']:
-        print("GOOD BYE!")
-        exit_program()
+        while True:
+            print("GOOD BYE!")
+            exit_program()
