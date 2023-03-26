@@ -95,3 +95,13 @@ https://codeinstitute.net/global/
 https://www.youtube.com/ 
 
 https://www.w3schools.com/
+
+https://stackoverflow.com/
+
+https://openai.com/
+
+CHAT GPT has been helpful and there are lines of code in the program that was generated from chat gpt.
+
+I have been working on this project day and night for the last few weeks.
+My brain is not working right at the moment i know this project will not pass all the criteria
+but i am submitting it now after i have deployed it on heruko because the deadline is today.

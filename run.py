@@ -30,7 +30,7 @@ print("Enter 'exit' at any time to quit the program.")
 
 # LOG IN OR REGISTER
 while True:
-    user_type = input("Login or create new account (login/new): ")
+    user_type = input("Login or create new account (login/new):\n")
     if user_type in ['new', 'login']:
         break
     elif user_type == 'exit':
@@ -43,7 +43,7 @@ accounts = SHEET.worksheet('accounts')
 if user_type == 'new':
     while True:
         # CHECKING USERNAMES LENGHT & THAT IT ONLY CONTAINS LETTERS
-        username = input("Select a username (3-10 letters): ")
+        username = input("Select a username (3-10 letters):\n ")
         if not username.isalpha() and 3 <= len(username) <= 10:
             print("Invalid input. 3-10 Letters only.")
             continue
@@ -53,7 +53,7 @@ if user_type == 'new':
         elif username == 'exit':
             exit_program()
 
-        pin = input("Select pin (4-6 digits): ")
+        pin = input("Select pin (4-6 digits):\n ")
         if not pin.isdigit() and 4 <= len(pin) <= 6:
             print("Invalid input. 4-6 Digits Ex: '9999', '5555', '123451'.")
             continue
@@ -87,11 +87,11 @@ if user_type == 'new':
 if user_type == 'login':
     while True:
 
-        username = input("Username: ")
+        username = input("Username:\n ")
         if username == 'exit':
             exit_program()
 
-        pin = input("Pin: ")
+        pin = input("Pin:\n ")
         if pin == 'exit':
             exit_program()
 
@@ -105,7 +105,7 @@ if user_type == 'login':
 
         elif cell is None:
             print("Username not found.")
-            choice = input("Try again or create a new account? (try/new): ")
+            choice = input("Try again or create a new account? (try/new):\n ")
 
             if choice == 'try':
                 continue
@@ -119,7 +119,7 @@ if user_type == 'login':
                 print("Invalid input. Enter 'try' or 'new'.")
         else:
             print("Username or pin incorrect.")
-            choice = input("Try again or create a new account? (try/new): ")
+            choice = input("Try again or create a new account? (try/new):\n ")
 
             if choice == 'try':
                 continue
@@ -161,7 +161,7 @@ while True:
     print("1. View profile. 2. Update profile.")
     print("3. View runs. 4. Add run.")
     print("5. Logout/Exit.")
-    go_to = input("Enter number: ")
+    go_to = input("Enter number:\n ")
     if go_to not in ['1', '2', '3', '4', '5', 'exit']:
         print("Invalid input. Enter digits only Ex: '1'")
         continue
@@ -182,7 +182,7 @@ while True:
         while True:
             print("1. View previous profile update")
             print("2. Go back to main menu.")
-            vp_nav = input("Enter number: ")
+            vp_nav = input("Enter number:\n ")
 
             if vp_nav == '1':
                 current_row -= 1
@@ -205,17 +205,17 @@ while True:
         while True:
             current_date = datetime.date.today().strftime('%Y-%m-%d')
 
-            gender = input("Enter your Gender (man/woman/other): ").lower()
+            gender = input("Enter your Gender (man/woman/other):\n ").lower()
             if gender not in ['man', 'woman', 'other']:
                 print("Invalid input. Enter 'man', 'woman', or 'other'")
                 continue
 
-            age = input("Enter your age (1-150): ")
+            age = input("Enter your age (1-150):\n ")
             if not age.isdigit() or not 1 <= int(age) <= 150:
                 print("Invalid input. Enter a valid age (1-150).")
                 continue
 
-            weight = input("Enter your weight in KG: ")
+            weight = input("Enter your weight in KG:\n ")
             try:
                 weight = float(weight)
                 if weight <= 0:
@@ -224,7 +224,7 @@ while True:
                 print("Invalid input. Enter a valid weight.")
                 continue
 
-            height = input("Enter your height in Cm: ")
+            height = input("Enter your height in Cm:\n ")
             try:
                 height = float(height)
                 if height <= 0:
@@ -256,7 +256,7 @@ while True:
         while True:
             print("1. View previous runs")
             print("2. Go back to main menu.")
-            vr_nav = input("Enter number: ")
+            vr_nav = input("Enter number:\n ")
 
             if vr_nav == '1':
                 current_row -= 1
@@ -289,22 +289,22 @@ while True:
 
             current_date = datetime.date.today()
             str_date = current_date.strftime('%Y-%m-%d')
-            print("To set date of run to current date enter (y)")
-            date = input("If other date Enter (YYYY-MM-DD): ")
+            print("To set date of run to current date enter 'y'")
+            date = input("If other date Enter (YYYY-MM-DD):\n ")
             if date == 'y':
                 date = str_date
             elif not re.match(r'\d{4}-\d{2}-\d{2}', date):
                 print("Invalid input. Enter 'YYYY-MM-DD'.")
                 continue
 
-            distance = input("Distance in Km Ex '5' or '5.3': ")
+            distance = input("Distance in Km Ex '5' or '5.3':\n ")
             if not re.match(r'^\d{1,2}(\.\d{1,2})?$', distance):
                 print("Invalid input. Enter Ex: '12.4' or '3'.")
                 continue
 
             distance_float = float(distance)
 
-            tot_time = input("Total run time MM:SS (Ex '27:14' or '06:02'): ")
+            tot_time = input("Total run time MM:SS Ex '27:14' or '06:02':\n ")
             if not re.match(r"^\d{2}:\d{2}$", tot_time):
                 print("Invalid input. Enter Ex: '07:04' or '55:41'")
                 continue
@@ -340,5 +340,4 @@ while True:
     # 5. EXIT / LOG OUT
     if go_to == '5' or go_to == 'exit':
         while True:
-            print("GOOD BYE!")
             exit_program()
