@@ -135,14 +135,10 @@ if user_type == 'login':
 # PROFILE SHEET
 profile_sheet = SHEET.worksheet(f'{username}_profile')
 profile_values = profile_sheet.get_all_values()
-profile_num_rows = profile_sheet.row_count
-profile_last_row = profile_num_rows
 
 # RUNS SHEET
 runs_sheet = SHEET.worksheet(f'{username}_runs')
 runs_values = runs_sheet.get_all_values()
-runs_num_rows = runs_sheet.row_count
-runs_last_row = runs_num_rows
 
 while True:
     # MAIN MENU
@@ -186,24 +182,27 @@ while True:
                 print("Profile empty. Update your profile!")
                 break
 
-            print("1. View last profile update.")
-            print("2. View complete profile history.")
-            print("3. Go back to main menu.")
-            go_to_one = input("Enter number: ")
+            print(profile_values[0])
+            print(profile_values[-1])
+            previous_row = -2
 
-            if go_to_one == '1':
-                print(profile_values[0])
-                print(profile_values[-1])
+            while True:
+                print("1. View previous profile update")
+                print("2. Go back to main menu.")
+                vp_nav = input("Enter number: ")
 
-            elif go_to_one == '2':
-                print(profile_values[0])
-                print(profile_values[-1])
-
-            elif go_to_one == '3':
-                break
-
-            else:
-                print("Invalid input. Enter '1', '2' or '3'")
+                if vp_nav == '1':
+                    if len(profile_values) + previous_row < 1:
+                        print("No more runs to view.")
+                        break
+                    else:
+                        print(profile_values[previous_row])
+                        previous_row -= 1
+                elif vp_nav == '2':
+                    break
+                else:
+                    print("Invalid input. Enter '1' or '2'")
+                    continue
 
     # 2. UPDATE PROFILE
     if go_to == '2':
@@ -243,37 +242,35 @@ while True:
             if len(runs_values) <= 1:
                 print("Runs empty. Add run first!")
                 break
-    
 
-            print("1. View last added run.")
-            print("2. View complete history.")
-            print("3. Go back to main menu.")
-            go_to_three = input("Enter number: ")
-            runs_values = runs_sheet.get_all_values()
+            print(runs_values[0])
+            print(runs_values[-1])
+            previous_row = -2
 
-            if go_to_three == '1':
-                print(runs_values[0])
-                print(runs_values[runs_last_row])
-                break
+            while True:
+                print("1. View previous profile update")
+                print("2. Go back to main menu.")
+                vr_nav = input("Enter number: ")
 
-# if i have time make this into a loop so that you can request history one at the time max 80 char
-            elif go_to_three == '2':
-                print(runs_values[0])
-                print(runs_values[runs_last_row])
-                break
-
-            elif go_to_three == '3':
-                break
-            else:
-                print("Invalid input. Enter '1', '2' or '3'")
-                continue
+                if vr_nav == '1':
+                    if len(runs_values) + previous_row < 1:
+                        print("No more runs to view.")
+                        break
+                    else:
+                        print(runs_values[previous_row])
+                        previous_row -= 1
+                elif vr_nav == '2':
+                    break
+                else:
+                    print("Invalid input. Enter '1' or '2'")
+                    continue
 
     # 4. ADD RUN
     if go_to == '4':
         while True:
             print("ADD RUN")
             profile_sheet = SHEET.worksheet(f'{username}_profile')
-            get_weight = profile_sheet.get_values(profile_last_row, 4).value
+            get_weight = profile_sheet.cell(profile_sheet.row_count, 4).value
             weight_float = float(get_weight)
 
             current_date = datetime.date.today()
@@ -286,9 +283,9 @@ while True:
                 print("Invalid input. Enter 'YYYY-MM-DD'.")
                 continue
 
-            distance = input("Distance in Km (Ex '5' or '5.3'): ")
+            distance = input("Distance in Km Ex '5' or '5.3': ")
             if not re.match(r'^\d{1,2}(\.\d)?$', distance):
-                print("Invalid input. Enter Ex: '12.4' or '3').")
+                print("Invalid input. Enter Ex: '12.4' or '3'.")
                 continue
 
             distance_float = float(distance)
@@ -297,12 +294,11 @@ while True:
             if not re.match(r"^\d{2}:\d{2}$", tot_time):
                 print("Invalid input. Enter Ex: '07:04' or '55:41'")
 
-            minutes = int(tot_time.split(':')[0])
-            seconds = int(tot_time.split(':')[1])
+            minutes, seconds = map(int, tot_time.split(':'))
 
             min_to_sec = minutes * 60 + seconds
 
-            sec_per_km = min_to_sec / distance
+            sec_per_km = min_to_sec / distance_float
 
             result_min = int(sec_per_km // 60)
 
@@ -310,14 +306,14 @@ while True:
 
             avg_km = f"{result_min}:{result_sec:02d}"
 
-            avg_speed = (distance * 3600) / min_to_sec
+            avg_speed = (distance_float * 3600) / min_to_sec
 
             kmh = f"{avg_speed:.2f} km/h"
 
             calories = 0.75 * weight_float * distance_float
 
             runs_data = [date, distance, tot_time, avg_km, kmh, calories]
-            runs_sheet.append_row(profile_data)
+            runs_sheet.append_row(runs_data)
             print("Run added succesfully.")
 
     # 5. EXIT / LOG OUT
